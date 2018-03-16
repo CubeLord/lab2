@@ -296,7 +296,8 @@ begin
   font_col_s <= pixel_column_s(5 downto 3) when (font_size_i = 3) else
                 pixel_column_s(4 downto 2) when (font_size_i = 2) else
                 pixel_column_s(3 downto 1) when (font_size_i = 1) else
-                pixel_column_s(2 downto 0)-1;-- because of synchronous memory read there is one cycle delay with char_addr_s, so font_col and font_row should be delayed also
+                pixel_column_s(2 downto 0)-1;
+-- because of synchronous memory read there is one cycle delay with char_addr_s, so font_col and font_row should be delayed also
 
   grid_size <= 64 when (font_size_i = 3) else
                32 when (font_size_i = 2) else

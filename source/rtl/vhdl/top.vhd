@@ -250,7 +250,43 @@ begin
   --dir_red
   --dir_green
   --dir_blue
- 
+	
+	dir_red <=
+			"11111111" when  (dir_pixel_column < "0001010000") else --80
+			"11111111" when (dir_pixel_column < "0010100000") else -- 160
+			"00000000" when (dir_pixel_column < "0011110000") else -- 240
+			"00000000" when (dir_pixel_column < "0101000000") else -- 320
+			"11111111" when (dir_pixel_column < "0110010000") else -- 400
+			"11111111" when (dir_pixel_column < "0111100000") else -- 480
+			"00000000" when (dir_pixel_column < "1000110000") else -- 560
+			"00000000";
+	
+	dir_green <=
+			"11111111" when  (dir_pixel_column < "0001010000") else --80
+			"11111111" when (dir_pixel_column < "0010100000") else -- 160
+			"11111111" when (dir_pixel_column < "0011110000") else -- 240
+			"11111111" when (dir_pixel_column < "0101000000") else -- 320
+			"00000000" when (dir_pixel_column < "0110010000") else -- 400
+			"00000000" when (dir_pixel_column < "0111100000") else -- 480
+			"00000000" when (dir_pixel_column < "1000110000") else -- 560
+			"00000000";
+			
+	dir_blue <=
+			"11111111" when  (dir_pixel_column < "0001010000") else --80
+			"00000000" when (dir_pixel_column < "0010100000") else -- 160
+			"11111111" when (dir_pixel_column < "0011110000") else -- 240
+			"00000000" when (dir_pixel_column < "0101000000") else -- 320
+			"11111111" when (dir_pixel_column < "0110010000") else -- 400
+			"00000000" when (dir_pixel_column < "0111100000") else -- 480
+			"11111111" when (dir_pixel_column < "1000110000") else -- 560
+			"00000000";
+
+
+--dir_blue <= x"FF";
+--dir_green <= x"FF";
+--dir_red <= x"00";	
+
+
   -- koristeci signale realizovati logiku koja pise po TXT_MEM
   --char_address
   --char_value
