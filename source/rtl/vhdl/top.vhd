@@ -157,6 +157,9 @@ architecture rtl of top is
   signal dir_pixel_column    : std_logic_vector(10 downto 0);
   signal dir_pixel_row       : std_logic_vector(10 downto 0);
 
+	signal pom : std_logic_vector(13 downto 0); 
+  signal brojac : std_logic_vector(23 downto 0); 
+
 begin
 
   -- calculate message lenght from font size
@@ -168,11 +171,11 @@ begin
   graphics_lenght <= conv_std_logic_vector(MEM_SIZE*8*8, GRAPH_MEM_ADDR_WIDTH);
   
   -- removed to inputs pin
-  direct_mode <= '1';
-  display_mode     <= "10";  -- 01 - text mode, 10 - graphics mode, 11 - text & graphics
+  direct_mode <= '0';
+  display_mode     <= "01";  -- 01 - text mode, 10 - graphics mode, 11 - text & graphics
   
   font_size        <= x"1";
-  show_frame       <= '1';
+  show_frame       <= '0';
   foreground_color <= x"FFFFFF";
   background_color <= x"000000";
   frame_color      <= x"FF0000";
@@ -291,6 +294,86 @@ begin
   --char_address
   --char_value
   --char_we
+  
+  
+--  
+--  ccounter : clk_counter
+--  port map (
+--    rst_i  => reset_n_i,  
+--	 clk_i => pix_clock_s,
+--    cnt_en_i => '1',      
+--    cnt_rst_i => '0',  
+--    one_sec_o => sec_en         
+--  );
+--  
+--	process(pix_clock_s, reset_n_i)
+--	begin
+--		if reset_n_i = '0' then
+--			char_address <= (others => '0');
+--		elsif rising_edge(pix_clock_s) then
+--			if char_address < 4800 then
+--				char_address <= char_address + 1;
+--			else
+--				char_address <=  (others => '0');
+--			end if;
+--		end if;
+--	end process;
+--	
+--	process(pix_clock_s, reset_n_i)
+--	begin
+--		if reset_n_i = '0' then
+--			pom <= (others => '0');
+--		elsif rising_edge(pix_clock_s) then
+--			if sec_en = '1' then
+--				pom <= pom + 1;
+--			end if;
+--		end if;
+--	end process;
+  
+  
+  
+  char_we <= '1';
+  
+	process(pix_clock_s, reset_n_i)
+	begin
+		if reset_n_i = '0' then
+			char_address <= (others => '0');
+			pom <= (others => '0');
+			brojac <= (others => '0');
+		elsif rising_edge(pix_clock_s) then
+			if brojac < 2000000 then
+				brojac <= brojac+1;
+				pom <= pom;
+			else
+				pom <= pom + 1;
+				brojac <= (others=>'0');
+			end if;
+			if char_address < 4800 then
+				char_address <= char_address + 1;
+			else
+				char_address <= pom; --<=base
+			end if;
+		end if;
+	end process;
+  
+  	char_value <= "001101" when char_address = (pom+0) else --M
+					  "001001" when char_address = (pom+1) else --I
+					  "001100" when char_address = (pom+2) else --L
+					  "001111" when char_address = (pom+3) else --O
+					  "010010" when char_address = (pom+4) else --R
+					  "000001" when char_address = (pom+5) else --A
+					  "000100" when char_address = (pom+6) else --D
+					  "100000" when char_address = (pom+7) else --razmak
+					  "001101" when char_address = (pom+8) else --M
+					  "000001" when char_address = (pom+9) else --A
+					  "010010" when char_address = (pom+10) else --R
+					  "001011" when char_address = (pom+11) else --K
+					  "001111" when char_address = (pom+12) else --O
+					  "010110" when char_address = (pom+13) else --V
+					  "001001" when char_address = (pom+14) else --I
+					  "000011" when char_address = (pom+15) else --C
+					  "100000"; --razmak
+  
   
   -- koristeci signale realizovati logiku koja pise po GRAPH_MEM
   --pixel_address
